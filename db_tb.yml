@@ -1,0 +1,57 @@
+# in amazon linux
+ 
+- name: secret
+  hosts: localhost
+  become: yes
+  connection: local
+  vars_files:
+    - pass.txt
+  vars:
+    ansible_python_interpreter: /opt/myenv/bin/python
+
+ 
+  tasks:
+    - name: Ensure python3-venv is installed
+      package:
+        name: python3-venv
+        state: present
+ 
+    - name: Create a virtual environment
+      command: python3 -m venv /opt/myenv
+ 
+    - name: Upgrade pip in virtual environment
+      command: /opt/myenv/bin/pip install --upgrade pip
+ 
+    - name: Install Python MySQL Module in virtual environment
+      command: /opt/myenv/bin/pip install PyMySQL
+ 
+    - name: Install MySQL server
+      apt:
+        name: mariadb-server
+        state: present
+ 
+    - name: Start MySQL service
+      service:
+        name: mariadb
+        state: started
+ 
+    - name: Login to MySQL and ensure the user exists
+      mysql_user:
+        name: "{{ username }}"
+        password: "{{ password }}"
+        login_user: root
+        login_password: "{{ password }}"
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        check_implicit_admin: yes
+        update_password: always
+        state: present
+        column_case_sensitive: false
+ 
+    - name: create a new database
+      mysql_db: name=testdb state=present login_user=root login_password="{{ password }}"
+ 
+    - name: add sample data to database
+      copy: src=dump.sql dest=/tmp/dump.sql
+ 
+    - name: insert sample data into database
+      mysql_db: name=testdb state=import target=/tmp/dump.sql login_user=root login_password="{{password }}"

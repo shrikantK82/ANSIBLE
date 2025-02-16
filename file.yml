@@ -1,0 +1,41 @@
+<<<<<<< HEAD
+=======
+# to create a file, directory and copy file
+
+>>>>>>> 0078bdb (a1)
+- name: myplay1
+  hosts: localhost
+  become: true
+  connection: local
+  tasks:
+<<<<<<< HEAD
+   - name: create file
+     file:
+      name: myfile.txt
+      state: touch
+   - name: create folder
+     file:
+      name: mydir
+      state: directory
+   - name: copy file to dir
+     copy:
+      src: myfile.txt
+      dest: mydir/
+
+# to create a file, directory and copy file
+# ansible-playbook -i myhost.ini file.yml
+
+=======
+    - name: create file
+      file:
+        name: create file
+        state: touch
+    - name: create folder
+      file:
+        name: mydir
+        state: directory
+    - name: copy file to dir
+      copy:
+        src: myfile.txt
+        desc: mydir/
+>>>>>>> 0078bdb (a1)
